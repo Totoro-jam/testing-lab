@@ -1,0 +1,15 @@
+node_modules
+dist
+coverage
+.nyc_output
+.vitest
+.cache
+*.log
+.DS_Store
+.idea
+.vscode/*
+!.vscode/settings.json.example
+playwright-report
+test-results
+.env.local
+.env.*.local

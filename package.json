@@ -1,0 +1,29 @@
+{
+  "name": "testing-lab",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Hands-on lab for learning frontend testing — vitest, jest, testing-library, MSW, playwright, and the engineering around them.",
+  "scripts": {
+    "test": "pnpm -r --filter=\"./packages/*\" run test",
+    "test:01": "pnpm --filter ./packages/01-fundamentals test",
+    "test:02": "pnpm --filter ./packages/02-vitest-basics test",
+    "test:03": "pnpm --filter ./packages/03-jest-basics test",
+    "test:04": "pnpm --filter ./packages/04-assertions test",
+    "test:05": "pnpm --filter ./packages/05-async test",
+    "test:06": "pnpm --filter ./packages/06-mocking test",
+    "test:07": "pnpm --filter ./packages/07-component-vue test",
+    "test:08": "pnpm --filter ./packages/08-component-react test",
+    "test:09": "pnpm --filter ./packages/09-network-mocking test",
+    "test:10": "pnpm --filter ./packages/10-coverage test",
+    "test:11": "pnpm --filter ./packages/11-e2e-playwright test",
+    "lint": "echo 'No global lint configured — see packages/12-engineering for example setup'"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

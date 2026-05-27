@@ -1,0 +1,17 @@
+{
+  "name": "@testing-lab/10-coverage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:istanbul": "vitest run --coverage --coverage.provider=istanbul"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "^1.5.0",
+    "@vitest/coverage-v8": "^1.5.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.0"
+  }
+}
