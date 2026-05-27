@@ -1,6 +1,6 @@
 // node 内置 test runner,无需任何依赖。
 // node:test 提供 test/describe/it;node:assert 提供断言。
-import { test, describe } from 'node:test'
+import { test, describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { add, divide } from '../src/calculator.js'
 
