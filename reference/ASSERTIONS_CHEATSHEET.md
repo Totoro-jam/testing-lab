@@ -161,3 +161,26 @@ expect(x).toMatchObject({ ... })
 ```
 
 **先把这 8 个练熟,其他用到再查这张表。**
+
+---
+
+## 14. assert vs expect 对照表
+
+> `assert` 是 Node 内置模块(`node:assert/strict`),零依赖;`expect` 是 vitest/jest 提供的链式风格。
+> 能力基本一一对应,写法不同:assert 是 `动词(actual, expected)`,expect 是 `expect(actual).动词(expected)`。
+
+| node:assert | vitest / jest expect | 用途 |
+|---|---|---|
+| `assert.equal(a, b)` | `expect(a).toBe(b)` | 严格相等 `===` |
+| `assert.deepEqual(a, b)` | `expect(a).toEqual(b)` | 递归比较对象内容 |
+| `assert.notEqual(a, b)` | `expect(a).not.toBe(b)` | 不等 |
+| `assert.ok(val)` | `expect(val).toBeTruthy()` | 真值判断 |
+| `assert.strictEqual(a, b)` | `expect(a).toBe(b)` | 严格相等(node 默认 strict) |
+| `assert.throws(() => fn())` | `expect(() => fn()).toThrow()` | 同步抛错 |
+| `assert.match(str, /reg/)` | `expect(str).toMatch(/reg/)` | 正则匹配 |
+| `assert.rejects(asyncFn)` | `expect(asyncFn).rejects.toThrow()` | 异步抛错 |
+
+expect 相比 assert 多出的能力:
+- `.not` 链式取反:`expect(x).not.toBe(2)`
+- 自定义 matcher:`expect.extend({ toBeWithinRange(received, floor, ceiling) { ... } })`
+- 更友好的错误输出:自动 diff、彩色对比
