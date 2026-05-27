@@ -82,7 +82,3 @@ pnpm test
 - 添新章节请放在 `packages/NN-name/`,数字越大越靠后
 - 每个 package 必须能独立 `pnpm install && pnpm test`,**不依赖根目录依赖**
 - 速查文档(reference/)只放跨章节通用知识,章节内特有的写进各自的 README
-
----
-
-License: MIT
