@@ -170,6 +170,29 @@ expect(date).toEqual(expect.any(Date))
 | `stringContaining('x')` | 字符串包含子串就行 | 日志消息只关心有 `'error'` |
 | `stringMatching(/x/)` | 字符串匹配正则就行 | 只关心格式正确 |
 | `any(Number)` | 是这个类型就行,不管具体值 | 时间戳、随机 ID |
+| `anything()` | 非 null/undefined 就行,类型也不管 | 只关心"有值" |
+
+**`any` vs `anything` 对比**:
+
+| 值 | `expect.any(Number)` | `expect.any(String)` | `expect.anything()` |
+|---|---|---|---|
+| `42` | ✅ | ❌ | ✅ |
+| `'hello'` | ❌ | ✅ | ✅ |
+| `new Date()` | ❌ | ❌ | ✅ |
+| `null` | ❌ | ❌ | ❌ |
+| `undefined` | ❌ | ❌ | ❌ |
+
+> `any(X)` = 我不关心具体值,但**必须是 X 类型**。`anything()` = 我连类型都不关心,**有值就行**。
+
+典型场景——API 返回的对象里有不可预测的字段:
+
+```ts
+expect(response).toEqual({
+  id: expect.any(String),        // 随机 ID，只要是字符串就行
+  createdAt: expect.any(Date),   // 时间戳，只要是 Date 就行
+  data: expect.anything(),       // 什么都行，有值就行
+})
+```
 
 它们可以**嵌套组合**:
 
@@ -295,15 +318,35 @@ expect.extend({
 expect('a@x.com').toBeValidEmail()
 ```
 
-加 TS 类型:
+加 TS 类型(需要声明**两个**接口,因为自定义 matcher 有两种用法):
 
 ```ts
 declare module 'vitest' {
+  // 用法 1: expect(value).toBeValidEmail()
   interface Assertion<T> {
     toBeValidEmail(): T
   }
+  // 用法 2: expect.toBeValidEmail() — 嵌套在 toEqual 等内部做部分匹配
+  interface AsymmetricMatchersContaining {
+    toBeValidEmail(): any
+  }
 }
 ```
+
+两种用法对应的写法:
+
+```ts
+// Assertion — 链尾直接调用
+expect('a@x.com').toBeValidEmail()
+
+// AsymmetricMatchersContaining — 嵌套在其他 matcher 里当占位匹配器
+expect(user).toEqual({
+  name: 'Alice',
+  email: expect.toBeValidEmail()
+})
+```
+
+> 只声明 `Assertion` 不声明 `AsymmetricMatchersContaining`,第二种写法会 TS 报错。建议两个都加上。
 
 ## 代码导读
 
