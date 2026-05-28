@@ -28,11 +28,41 @@ expect(fn).toHaveBeenLastCalledWith('c')
 常用 mock 实现方法:
 
 ```ts
-vi.fn().mockReturnValue(42)
-vi.fn().mockReturnValueOnce(1).mockReturnValueOnce(2)  // 用完一次就消耗一个
-vi.fn().mockResolvedValue({ ok: true })   // = mockReturnValue(Promise.resolve(...))
-vi.fn().mockRejectedValue(new Error('x')) // 直接 reject
-vi.fn().mockImplementation((a, b) => a + b)
+vi.fn().mockReturnValue(42)                             // 每次都返回 42
+vi.fn().mockReturnValueOnce(1).mockReturnValueOnce(2)   // 用完一次就消耗一个
+vi.fn().mockResolvedValue({ ok: true })                 // = mockReturnValue(Promise.resolve(...))
+vi.fn().mockRejectedValue(new Error('x'))               // 直接 reject
+vi.fn().mockImplementation((a, b) => a + b)             // 自定义实现
+```
+
+### `mockReturnValue` vs `mockReturnValueOnce` — 队列 + 兜底
+
+`Once` 版本会按顺序排成队列,每次调用消耗一个;队列空了就用 `mockReturnValue` 的兜底值:
+
+```ts
+const fn = vi.fn().mockReturnValue('default')
+  .mockReturnValueOnce('first')
+  .mockReturnValueOnce('second')
+
+fn()  // → 'first'    ← 队列第 1 个（消耗掉）
+fn()  // → 'second'   ← 队列第 2 个（消耗掉）
+fn()  // → 'default'  ← 队列空了,用兜底值
+fn()  // → 'default'  ← 一直是兜底值
+```
+
+| 组合方式 | 行为 |
+|---|---|
+| 只有 `mockReturnValue('x')` | 每次都返回 `'x'` |
+| 只有 `mockReturnValueOnce(...)` | Once 用完后返回 `undefined` |
+| 两者组合 | Once 按顺序消耗,用完后 fallback 到 `mockReturnValue` |
+
+`mockResolvedValue` / `mockRejectedValue` 同理,也有对应的 `Once` 版本:
+
+```ts
+// 实战:模拟第一次请求失败,之后都成功
+const mockFetch = vi.fn()
+  .mockRejectedValueOnce(new Error('网络超时'))  // 第 1 次:失败
+  .mockResolvedValue({ data: 'ok' })             // 之后:永远成功
 ```
 
 ---

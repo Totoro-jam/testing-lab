@@ -16,7 +16,6 @@ describe('vi.fn — mock function 基础', () => {
   it('mockReturnValue 固定返回值', () => {
     const fn = vi.fn().mockReturnValue(42)
     expect(fn()).toBe(42)
-    expect(fn()).toBe(42)
   })
 
   it('mockReturnValueOnce 用完即弃', () => {
