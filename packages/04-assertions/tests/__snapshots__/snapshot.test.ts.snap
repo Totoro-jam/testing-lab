@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`快照测试 > toMatchSnapshot — 第一次跑写到 __snapshots__/xxx.snap 1`] = `
+{
+  "email": "alice@example.com",
+  "id": 1,
+  "name": "Alice",
+  "profile": {
+    "age": 30,
+    "city": "Shanghai",
+  },
+  "roles": [
+    "admin",
+    "editor",
+  ],
+}
+`;
+
+exports[`快照测试 > 快照可以加属性匹配器,忽略某些不稳定字段 1`] = `
+{
+  "createdAt": Any<Date>,
+  "data": {
+    "count": 42,
+  },
+  "id": Any<String>,
+}
+`;

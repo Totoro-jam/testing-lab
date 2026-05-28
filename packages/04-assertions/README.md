@@ -40,6 +40,18 @@ expect({a: 1, b: undefined}).toStrictEqual({a: 1}) // ❌ 严格
 
 **选择口诀**:对象/数组用 `toEqual`,原始值用 `toBe`,需要严格区分 undefined 字段用 `toStrictEqual`。
 
+**三者差异速查**:
+
+| 场景 | `toBe` | `toEqual` | `toStrictEqual` |
+|---|---|---|---|
+| `1` vs `1` | ✅ | ✅ | ✅ |
+| `{a:1}` vs `{a:1}`（不同引用） | ❌ | ✅ | ✅ |
+| `{a:1, b:undefined}` vs `{a:1}` | ❌ | ✅ | ❌ |
+| `[1,,3]` vs `[1,undefined,3]` | ❌ | ✅ | ❌ |
+| `new Cat('Tom')` vs `{name:'Tom'}` | ❌ | ✅ | ❌ |
+
+> `toBe` = 同一个引用（`===`）; `toEqual` = 长得一样就行; `toStrictEqual` = 长得一样且"血统"也一样。
+
 ### 类别 2:真值/空值
 
 ```ts
@@ -53,6 +65,17 @@ expect(x).toBeNaN()          // Number.isNaN(x)
 
 **坑**:`toBeTruthy()` 接受 `'hello'`、`1`、`{}` 等;别用它当成 `toBe(true)`。
 
+**各值对各断言的结果速查**:
+
+| 值 | `toBeDefined` | `toBeTruthy` | `toBeNull` | `toBeFalsy` |
+|---|---|---|---|---|
+| `undefined` | ❌ | ❌ | ❌ | ✅ |
+| `null` | ✅ | ❌ | ✅ | ✅ |
+| `0` | ✅ | ❌ | ❌ | ✅ |
+| `''` | ✅ | ❌ | ❌ | ✅ |
+| `'hello'` | ✅ | ✅ | ❌ | ❌ |
+| `{}` | ✅ | ✅ | ❌ | ❌ |
+
 ### 类别 3:数字
 
 ```ts
@@ -65,6 +88,16 @@ expect(x).toBeCloseTo(0.3, 2)       // 浮点近似,精度第 2 位
 
 **`toBeCloseTo` 的存在理由**:`0.1 + 0.2 !== 0.3`(浮点精度)。所有涉及 `*/+/-` 的浮点比较都该用它。
 
+**数字断言对应运算符速查**:
+
+| matcher | 等价运算符 | 记忆 |
+|---|---|---|
+| `toBeGreaterThan(3)` | `> 3` | Greater = 大于 |
+| `toBeGreaterThanOrEqual(3)` | `>= 3` | 加 OrEqual = 多个 `=` |
+| `toBeLessThan(3)` | `< 3` | Less = 小于 |
+| `toBeLessThanOrEqual(3)` | `<= 3` | 同上 |
+| `toBeCloseTo(0.3, 2)` | `≈ 0.3`（精度 2 位） | 浮点专用,别用 `toBe` |
+
 ### 类别 4:字符串/正则
 
 ```ts
@@ -73,6 +106,16 @@ expect('hello world').toMatch('world')        // 子串
 expect('hello').toContain('he')               // 子串(更明确)
 expect('hello').toHaveLength(5)               // 长度
 ```
+
+**`toMatch` vs `toContain` 能力对比**:
+
+| 能力 | `toMatch` | `toContain` |
+|---|---|---|
+| 字符串子串 | ✅ | ✅ |
+| 正则表达式 | ✅ | ❌ |
+| 数组元素 | ❌ | ✅ |
+
+> 习惯:**字符串用 `toMatch`**(随时可升级为正则),**数组用 `toContain`**。
 
 ### 类别 5:数组/集合
 
@@ -83,6 +126,15 @@ expect([1, 2, 3]).toHaveLength(3)
 ```
 
 `toContain` vs `toContainEqual`:前者是 `===`,后者是深度相等。对象数组永远用后者。
+
+**`toContain` vs `toContainEqual` 对比**:
+
+| 场景 | `toContain` | `toContainEqual` |
+|---|---|---|
+| `[1,2,3]` 包含 `2` | ✅ | ✅ |
+| `[{id:1}]` 包含 `{id:1}`（新对象） | ❌（引用不同） | ✅（结构相同） |
+
+> 原始值数组用 `toContain`,对象数组用 `toContainEqual`。
 
 ### 类别 6:对象 + 部分匹配
 
@@ -109,7 +161,31 @@ expect(now).toEqual(expect.any(Number))
 expect(date).toEqual(expect.any(Date))
 ```
 
-**`expect.objectContaining` 是最常被忽视但最有用的工具**——当你只关心对象的一部分字段时(比如 mock 调用参数),用它能避免脆弱的"全字段断言"。
+**`xxxContaining` 系列的核心思想:只断言你关心的部分,忽略其余。**
+
+| 匹配器 | 作用 | 典型场景 |
+|---|---|---|
+| `objectContaining({...})` | 对象包含这些字段就行,其余不管 | API 响应只关心 `{status: 200}` |
+| `arrayContaining([...])` | 数组包含这些元素就行,顺序不限 | 权限列表只关心包含 `'admin'` |
+| `stringContaining('x')` | 字符串包含子串就行 | 日志消息只关心有 `'error'` |
+| `stringMatching(/x/)` | 字符串匹配正则就行 | 只关心格式正确 |
+| `any(Number)` | 是这个类型就行,不管具体值 | 时间戳、随机 ID |
+
+它们可以**嵌套组合**:
+
+```ts
+// 用户列表里至少有一个 admin,且 email 格式合法
+expect(users).toEqual(
+  expect.arrayContaining([
+    expect.objectContaining({
+      role: 'admin',
+      email: expect.stringMatching(/@/)
+    })
+  ])
+)
+```
+
+**什么时候用**:对象有不稳定字段(时间戳/ID)、只关心关键参数、避免加字段就挂的脆弱测试。
 
 ### 类别 7:异常
 
@@ -124,6 +200,18 @@ expect(() => fn()).toThrow(new Error('boom')) // 精确错误对象
 
 **别忘了包函数**——直接 `expect(fn())` 会先执行抛错,断言就跑不到了。
 
+**`toThrow` 第二参数类型对比**:
+
+| 写法 | 匹配方式 |
+|---|---|
+| `toThrow()` | 任意错误（危险,太宽泛） |
+| `toThrow('boom')` | `error.message` 包含子串 |
+| `toThrow(/^Invalid/)` | `error.message` 匹配正则 |
+| `toThrow(TypeError)` | `error instanceof TypeError` |
+| `toThrow(new Error('x'))` | 精确匹配错误对象 |
+
+> 最佳实践:至少断言错误类型或消息,不要裸 `toThrow()`。
+
 ### 类别 8:Mock 函数(详见第 06 章)
 
 ```ts
@@ -136,12 +224,34 @@ expect(mockFn).toHaveReturned()
 expect(mockFn).toHaveReturnedWith(42)
 ```
 
+**Mock 断言选择速查**:
+
+| 你想验证什么 | 用哪个 |
+|---|---|
+| 有没有被调过 | `toHaveBeenCalled()` |
+| 被调了几次 | `toHaveBeenCalledTimes(n)` |
+| 某一次传了什么参数 | `toHaveBeenCalledWith(...)` |
+| 最后一次传了什么 | `toHaveBeenLastCalledWith(...)` |
+| 第 N 次传了什么 | `toHaveBeenNthCalledWith(n, ...)` |
+| 返回值是什么 | `toHaveReturnedWith(...)` |
+
 ### 类别 9:Promise
 
 ```ts
 await expect(fetchUser(1)).resolves.toEqual({...})
 await expect(fetchUser(0)).rejects.toThrow('Invalid')
 ```
+
+**Promise 断言注意点**:
+
+| 写法 | 结果 |
+|---|---|
+| `await expect(p).resolves.toBe(1)` | ✅ 正确等待 |
+| `expect(p).resolves.toBe(1)` (漏了 await) | ❌ 断言不生效,测试假绿 |
+
+> 永远加 `await`,否则 Promise 还没 resolve 测试就结束了,断言被跳过但不报错。
+>
+> **防漏 await 的工具链方案**: 配置 `eslint-plugin-vitest` 的 `valid-expect` 规则,或 `@typescript-eslint/no-floating-promises`,编辑器里直接红线提示。
 
 **第 05 章详讲**。
 
