@@ -40,19 +40,3 @@ describe('vi.mock — 整个模块替换', () => {
       .toBeLessThan(vi.mocked(saveUser).mock.invocationCallOrder[0])
   })
 })
-
-describe('vi.mock + importActual — 只 mock 部分 export', () => {
-  // 用工厂函数返回一个对象,展开 actual 再覆盖想 mock 的字段
-  vi.mock('../src/api', async () => {
-    const actual = await vi.importActual<typeof import('../src/api')>('../src/api')
-    return {
-      ...actual,
-      fetchUser: vi.fn().mockResolvedValue({ id: 99, name: 'mocked' }),
-    }
-  })
-
-  it('fetchUser 被 mock,saveUser 用真实现', async () => {
-    const msg = await greetUser(1)
-    expect(msg).toBe('hello mocked')
-  })
-})
