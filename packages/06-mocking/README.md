@@ -108,7 +108,29 @@ it('greetUser 调 api 后拼字符串', async () => {
 **关键细节:**
 - `vi.mock` 是 **hoisted**(被提升到文件顶部),即使写在 import 下面也先执行
 - `vi.mocked(fn)` 只是 TS 类型助手,运行时等同 `fn as any`
-- 想保留部分原实现:`vi.mock('./api', async () => ({ ...await vi.importActual('./api'), fetchUser: vi.fn() }))`
+- 同一个测试文件里,对同一个模块路径只能 `vi.mock` 一次,否则后者覆盖前者
+
+### `vi.importActual` — 只 mock 部分,其余保留真实现
+
+`vi.mock('./api')` 会把模块里**所有** export 替换成 `vi.fn()`。如果你只想 mock 其中一个函数:
+
+```ts
+vi.mock('./api', async () => {
+  // vi.importActual 绕过 mock 拦截,拿到真实模块
+  const actual = await vi.importActual<typeof import('./api')>('./api')
+  return {
+    ...actual,          // 展开所有真实 export(saveUser 等保留真实现)
+    fetchUser: vi.fn(), // 只覆盖 fetchUser
+  }
+})
+```
+
+**为什么不能直接 `import('./api')`?** 因为 `vi.mock` 已经拦截了这个路径,`import('./api')` 拿到的也是 mock 版本。`vi.importActual` 是唯一能绕过拦截、取回原始模块的方法。
+
+| 写法 | 效果 |
+|---|---|
+| `vi.mock('./api')` | 所有 export → `vi.fn()`(全 mock) |
+| `vi.mock('./api', factory)` + `vi.importActual` | 指定的 → `vi.fn()`,其余 → 真实现(部分 mock) |
 
 ---
 
