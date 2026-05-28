@@ -2,8 +2,8 @@ import { vi } from 'vitest'
 import { debounce, retry } from '../src/api'
 
 describe('假定时器(fake timers)', () => {
-  beforeEach(() => vi.useFakeTimers())
-  afterEach(() => vi.useRealTimers())  // 关键:必须还原
+  beforeEach(() => { vi.useFakeTimers() })
+  afterEach(() => { vi.useRealTimers() })  // 关键:必须还原
 
   describe('基础:advanceTimersByTime', () => {
     it('setTimeout 不会真的等', () => {
@@ -64,15 +64,18 @@ describe('假定时器(fake timers)', () => {
   })
 
   describe('Promise + fake timers(高频坑)', () => {
-    it('retry 重试 3 次后失败', async () => {
-      const failing = vi.fn().mockRejectedValue(new Error('boom'))
-      const promise = retry(failing, { times: 2, delay: 100 })
+    it('retry 重试后成功', async () => {
+      const task = vi.fn()
+        .mockRejectedValueOnce(new Error('fail1'))
+        .mockResolvedValueOnce('ok')
+
+      const promise = retry(task, { times: 1, delay: 100 })
 
       // 必须用 advanceTimersByTimeAsync,普通的 advance 不会 flush microtasks
-      await vi.advanceTimersByTimeAsync(300)
+      await vi.advanceTimersByTimeAsync(100)
 
-      await expect(promise).rejects.toThrow('boom')
-      expect(failing).toHaveBeenCalledTimes(3)  // 1 次原始 + 2 次重试
+      await expect(promise).resolves.toBe('ok')
+      expect(task).toHaveBeenCalledTimes(2)
     })
 
     it('runAllTimersAsync 跑光所有(含 Promise 链)', async () => {

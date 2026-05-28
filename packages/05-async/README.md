@@ -53,12 +53,25 @@ vs try/catch 写法:
 
 ```ts
 // 同样能用,但啰嗦
-await expect(async () => {
-  await fetchUser(-1)
-}).rejects.toThrow('invalid id')
+it('fetchUser(-1) 抛错', async () => {
+  try {
+    await fetchUser(-1)
+    // 如果没抛错,手动让测试失败
+    expect.unreachable('should have thrown')
+  } catch (e) {
+    expect(e).toBeInstanceOf(RangeError)
+    expect((e as Error).message).toMatch('invalid id')
+  }
+})
 ```
 
-**经验:能用 `.resolves/.rejects` 就不要用 try/catch,可读性差距很大。**
+**经验:能用 `.resolves/.rejects` 就不要用 try/catch。** 对比:
+
+| | `.rejects` | try/catch |
+|---|---|---|
+| 行数 | 1 行 | 6-7 行 |
+| 漏断言风险 | 无 | 忘写 `expect.unreachable` 则不抛错时假绿 |
+| 可读性 | 一眼看出"期望拒绝" | 要读完整个 try/catch 块 |
 
 ---
 
@@ -69,8 +82,8 @@ await expect(async () => {
 ```ts
 import { vi } from 'vitest'
 
-beforeEach(() => vi.useFakeTimers())
-afterEach(() => vi.useRealTimers())  // 必须还原!不然影响其他测试
+beforeEach(() => { vi.useFakeTimers() })
+afterEach(() => { vi.useRealTimers() })  // 必须还原!不然影响其他测试
 
 it('debounce 触发一次', () => {
   const fn = vi.fn()
@@ -100,20 +113,65 @@ it('debounce 触发一次', () => {
 
 ## 异步 + 假定时器混用
 
-最常踩的坑:Promise resolve 排进 microtask queue,但 fake timer 不会自动 flush microtasks。
+### 什么场景会遇到？
+
+当你的代码里**既有 setTimeout 又有 Promise**,比如:
++
 
 ```ts
-it('retry 重试 3 次后 reject', async () => {
-  vi.useFakeTimers()
-  const promise = retry(() => Promise.reject('boom'), { times: 3, delay: 100 })
+// 一个带延迟的重试函数 — setTimeout + Promise 混用
+async function fetchWithRetry(fn, { times, delay }) {
+  for (let i = 0; i < times; i++) {
+    try {
+      return await fn()
+    } catch {
+      await new Promise(r => setTimeout(r, delay))  // ← setTimeout + Promise 同时出现
+    }
+  }
+  throw new Error('all retries failed')
+}
+```
 
-  // 必须用 advanceTimersByTimeAsync,它会在每次 tick 后 flush microtasks
-  await vi.advanceTimersByTimeAsync(300)
-  await expect(promise).rejects.toBe('boom')
+类似的场景还有:防抖函数返回 Promise、轮询接口、动画等待后回调。
+
+### 坑在哪？
+
+JS 有两个队列,执行顺序不同:
+
+```
+微任务队列 (microtask) ← Promise.then/await 排这里,优先级高
+宏任务队列 (macrotask) ← setTimeout/setInterval 排这里,优先级低
+```
+
+`vi.advanceTimersByTime(300)` 是**同步的**——它只推进 setTimeout 的时钟,但不会等 Promise 完成:
+
+```ts
+it('❌ 错误写法', async () => {
+  vi.useFakeTimers()
+  const promise = fetchWithRetry(() => Promise.reject('boom'), { times: 3, delay: 100 })
+
+  vi.advanceTimersByTime(300)  // 同步推进时钟,setTimeout 触发了
+                                // 但 Promise.then 还挂在微任务队列里没执行
+  await expect(promise).rejects.toThrow()  // ❌ 可能卡死或结果不对
+})
+
+it('✅ 正确写法', async () => {
+  vi.useFakeTimers()
+  const promise = fetchWithRetry(() => Promise.reject('boom'), { times: 3, delay: 100 })
+
+  await vi.advanceTimersByTimeAsync(300)  // async 版本:每推进一步都会 flush 微任务队列
+  await expect(promise).rejects.toThrow()  // ✅ 正常工作
 })
 ```
 
-**规则:fake timer + Promise = 用 `advanceTimersByTimeAsync` / `runAllTimersAsync`。**
+### 选哪个？
+
+| 方法 | 何时用 |
+|---|---|
+| `advanceTimersByTime` (同步) | 代码里只有 setTimeout,没有 Promise |
+| `advanceTimersByTimeAsync` (异步) | 代码里 setTimeout + Promise 混用 |
+
+**简单规则:只要被测代码里有 `async/await` 或 `Promise`,就用 `Async` 后缀版本。**
 
 ---
 

@@ -30,10 +30,17 @@ describe('并发与时序', () => {
     }
   })
 
-  it('vitest 的 it.concurrent 并行运行同 describe 下测试', async () => {
-    // 默认是串行的,加 .concurrent 后这两个 it 会同时跑
-    // (本测试只演示用法,真实价值在 IO 密集的 case)
-    await delay(10)
-    expect(true).toBe(true)
+  describe('it.concurrent 并行运行', () => {
+    it.concurrent('任务 A', async () => {
+      await delay(50)
+      expect(1 + 1).toBe(2)
+    })
+
+    it.concurrent('任务 B', async () => {
+      await delay(50)
+      expect(2 + 2).toBe(4)
+    })
+
+    // 任务 A 和 B 同时开始,总耗时 ≈ 50ms 而非 100ms
   })
 })
