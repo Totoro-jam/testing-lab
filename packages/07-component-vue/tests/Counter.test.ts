@@ -23,6 +23,16 @@ describe("Counter.vue", () => {
     expect(screen.getByText("count: 2")).toBeInTheDocument();
   });
 
+  it("点击 - 自减", async () => {
+    const user = userEvent.setup();
+    render(Counter, { props: { initial: 4 } });
+
+    await user.click(screen.getByRole("button", { name: "-" }));
+    await user.click(screen.getByRole("button", { name: "-" }));
+
+    expect(screen.getByText("count: 2")).toBeInTheDocument();
+  });
+
   it("emit change 事件携带新值", async () => {
     const user = userEvent.setup();
     const { emitted } = render(Counter);
