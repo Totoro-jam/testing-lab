@@ -1,42 +1,43 @@
-import { vi } from 'vitest'
-import { greetUser, renameUser } from '../src/service'
-import { fetchUser, saveUser } from '../src/api'
+import { vi } from "vitest";
+import { greetUser, renameUser } from "../src/service";
+import { fetchUser, saveUser } from "../src/api";
 
 // vi.mock 是 hoisted —— 即使写在 import 下面,实际执行时会被提到最顶部
-vi.mock('../src/api')
+vi.mock("../src/api");
 
-describe('vi.mock — 整个模块替换', () => {
+describe("vi.mock — 整个模块替换", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
-  it('mock fetchUser 后,service 拿到我们指定的数据', async () => {
-    vi.mocked(fetchUser).mockResolvedValue({ id: 1, name: 'Alice' })
+  it("mock fetchUser 后,service 拿到我们指定的数据", async () => {
+    vi.mocked(fetchUser).mockResolvedValue({ id: 1, name: "Alice" });
 
-    const msg = await greetUser(1)
-    expect(msg).toBe('hello Alice')
-    expect(fetchUser).toHaveBeenCalledWith(1)
-  })
+    const msg = await greetUser(1);
+    expect(msg).toBe("hello Alice");
+    expect(fetchUser).toHaveBeenCalledWith(1);
+  });
 
-  it('renameUser 先 fetch 再 save', async () => {
-    vi.mocked(fetchUser).mockResolvedValue({ id: 5, name: 'old' })
-    vi.mocked(saveUser).mockResolvedValue(undefined)
+  it("renameUser 先 fetch 再 save", async () => {
+    vi.mocked(fetchUser).mockResolvedValue({ id: 5, name: "old" });
+    vi.mocked(saveUser).mockResolvedValue(undefined);
 
-    const result = await renameUser(5, 'new')
-    expect(result).toEqual({ id: 5, name: 'new' })
+    const result = await renameUser(5, "new");
+    expect(result).toEqual({ id: 5, name: "new" });
 
-    expect(fetchUser).toHaveBeenCalledWith(5)
-    expect(saveUser).toHaveBeenCalledWith({ id: 5, name: 'new' })
-  })
+    expect(fetchUser).toHaveBeenCalledWith(5);
+    expect(saveUser).toHaveBeenCalledWith({ id: 5, name: "new" });
+  });
 
-  it('断言调用顺序', async () => {
-    vi.mocked(fetchUser).mockResolvedValue({ id: 1, name: 'A' })
-    vi.mocked(saveUser).mockResolvedValue(undefined)
+  it("断言调用顺序", async () => {
+    vi.mocked(fetchUser).mockResolvedValue({ id: 1, name: "A" });
+    vi.mocked(saveUser).mockResolvedValue(undefined);
 
-    await renameUser(1, 'B')
+    await renameUser(1, "B");
 
     // 通过 mock.invocationCallOrder 拿到全局调用顺序号
-    expect(vi.mocked(fetchUser).mock.invocationCallOrder[0])
-      .toBeLessThan(vi.mocked(saveUser).mock.invocationCallOrder[0])
-  })
-})
+    expect(vi.mocked(fetchUser).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(saveUser).mock.invocationCallOrder[0],
+    );
+  });
+});

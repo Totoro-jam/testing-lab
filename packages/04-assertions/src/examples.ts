@@ -2,22 +2,22 @@
 
 export const sampleUser = {
   id: 1,
-  name: 'Alice',
-  email: 'alice@example.com',
-  roles: ['admin', 'editor'],
+  name: "Alice",
+  email: "alice@example.com",
+  roles: ["admin", "editor"],
   profile: {
     age: 30,
-    city: 'Shanghai',
+    city: "Shanghai",
   },
-}
+};
 
 export const sampleUsers = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' },
-  { id: 3, name: 'Carol' },
-]
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Carol" },
+];
 
 export function divideStrict(a: number, b: number): number {
-  if (b === 0) throw new TypeError('Cannot divide by zero')
-  return a / b
+  if (b === 0) throw new TypeError("Cannot divide by zero");
+  return a / b;
 }

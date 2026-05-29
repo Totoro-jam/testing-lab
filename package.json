@@ -16,10 +16,19 @@
     "test:09": "pnpm --filter ./packages/09-network-mocking test",
     "test:10": "pnpm --filter ./packages/10-coverage test",
     "test:11": "pnpm --filter ./packages/11-e2e-playwright test",
-    "lint": "echo 'No global lint configured — see packages/12-engineering for example setup'"
+    "lint": "echo 'No global lint configured — see packages/12-engineering for example setup'",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,vue}\" \"packages/*/tests/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"packages/*/src/**/*.{ts,tsx,vue}\" \"packages/*/tests/**/*.{ts,tsx}\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,vue,js,jsx}": "prettier --write"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.8.3",
     "typescript": "^5.4.5"
   },
   "engines": {

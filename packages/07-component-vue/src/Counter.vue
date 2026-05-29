@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const props = defineProps<{ initial?: number }>()
-const emit = defineEmits<{ (e: 'change', n: number): void }>()
+const props = defineProps<{ initial?: number }>();
+const emit = defineEmits<{ (e: "change", n: number): void }>();
 
-const count = ref(props.initial ?? 0)
+const count = ref(props.initial ?? 0);
 
 function inc() {
-  count.value++
-  emit('change', count.value)
+  count.value++;
+  emit("change", count.value);
 }
 
 function dec() {
-  count.value--
-  emit('change', count.value)
+  count.value--;
+  emit("change", count.value);
 }
 </script>
 
