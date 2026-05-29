@@ -170,3 +170,11 @@ vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
 - mock 太多导致测试在测"我 mock 出来的世界" — 重构出 thin wrapper,只 mock 边界(HTTP、DB、time)
 
 **原则:只 mock 三类东西 —— I/O(网络/磁盘)、时间、随机。其他都用真实现。**
+
+---
+
+## 延伸阅读
+
+- [Vitest — Mocking](https://vitest.dev/guide/mocking.html)
+- [Vitest — vi API](https://vitest.dev/api/vi.html)
+- [Jest — Mock Functions](https://jestjs.io/docs/mock-functions)

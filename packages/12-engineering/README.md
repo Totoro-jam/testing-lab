@@ -149,3 +149,13 @@ jobs:
 - **覆盖率 PR diff**:只看新代码,别全局背锅
 - **大型重构前先补测试** —— 不然不敢动
 - **新人 onboarding 第一周 = 跑测试 + 读现有测试** —— 测试是最好的活文档
+
+---
+
+## 延伸阅读
+
+- [husky](https://github.com/typicode/husky) — Git hooks 管理
+- [lint-staged](https://github.com/lint-staged/lint-staged) — 只对暂存文件跑 lint/format
+- [commitlint](https://github.com/conventional-changelog/commitlint) — Commit 消息规范检查
+- [GitHub Actions](https://docs.github.com/en/actions) — CI/CD
+- [Codecov](https://github.com/codecov/codecov-action) — 覆盖率报告

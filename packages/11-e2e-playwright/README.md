@@ -130,3 +130,11 @@ e2e/
 ```
 
 **Page Object Model** 适合中大型项目:把页面元素和操作封装成类,测试只写"业务流",元素改了改一处。
+
+---
+
+## 延伸阅读
+
+- [Playwright 官方文档](https://playwright.dev/) · [GitHub](https://github.com/microsoft/playwright)
+- [Cypress](https://github.com/cypress-io/cypress) — 另一个流行的 E2E 框架(对比用)
+- [Playwright VS Code 扩展](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) — 编辑器内运行/调试 e2e

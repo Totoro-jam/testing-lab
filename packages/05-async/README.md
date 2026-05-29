@@ -185,3 +185,12 @@ it('✅ 正确写法', async () => {
 | 测轮询/重试 | fake timers + `advanceTimersByTimeAsync` |
 | 测"今天是周一"的逻辑 | `vi.setSystemTime(...)` |
 | 测 `Promise.all` 失败 | `await expect(...).rejects.toThrow()` |
+
+---
+
+## 延伸阅读
+
+- [Vitest — Fake Timers](https://vitest.dev/api/vi.html#vi-usefaketimers)
+- [Vitest — Async tests](https://vitest.dev/guide/testing-types.html)
+- [@sinonjs/fake-timers](https://github.com/nicolo-ribaudo/sinon) — Vitest/Jest 假定时器的底层实现
+- [Vitest API — vi](https://vitest.dev/api/vi.html)

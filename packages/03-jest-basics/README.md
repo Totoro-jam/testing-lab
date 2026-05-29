@@ -145,8 +145,10 @@ Jest 慢有几个常见原因:
 
 ## 延伸阅读
 
-- [Jest 官方](https://jestjs.io/)
-- [ts-jest 配置](https://kulshekhar.github.io/ts-jest/)
+- [Jest 官方](https://jestjs.io/) · [GitHub](https://github.com/jestjs/jest)
+- [ts-jest](https://github.com/kulshekhar/ts-jest) — TypeScript 编译,带类型检查
+- [babel-jest](https://github.com/jestjs/jest/tree/main/packages/babel-jest) — Babel 编译,仅剥类型
+- [@swc/jest](https://github.com/swc-project/jest) — SWC 编译,极快
 - [Vitest migration from Jest](https://vitest.dev/guide/migration.html)
 
 ## 自测

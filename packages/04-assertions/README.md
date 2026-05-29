@@ -401,6 +401,8 @@ expect(() => fn()).toThrow()  // 仍然 pass!
 - [Vitest expect API](https://vitest.dev/api/expect.html)
 - [Jest matchers](https://jestjs.io/docs/expect)
 - [Custom matchers (vitest)](https://vitest.dev/guide/extending-matchers.html)
+- [eslint-plugin-vitest](https://github.com/vitest-dev/eslint-plugin-vitest) — Vitest 专用 ESLint 规则(valid-expect、no-focused-tests 等)
+- [jest-extended](https://github.com/jest-community/jest-extended) — 社区扩展 matcher 集合(toBeEmpty、toContainKey 等)
 
 ## 自测
 

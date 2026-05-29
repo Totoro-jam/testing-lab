@@ -1,6 +1,6 @@
 # 08 · React 组件测试
 
-`@testing-library/react` 的 API 和 Vue 版几乎一致(同一个家族的库),所以这章重点放在 **React 特有的坑**。
+[`@testing-library/react`](https://github.com/testing-library/react-testing-library) 的 API 和 Vue 版几乎一致(同一个家族的库),所以这章重点放在 **React 特有的坑**。
 
 ---
 
@@ -103,3 +103,12 @@ it('提交表单', async () => {
 | 自定义 hook | `renderHook` + 手动 `act` |
 | 需要 Provider | 自己写 `customRender` 包一层 |
 | context/store | 真实 provider + 测试数据,不要 mock useContext |
+
+---
+
+## 延伸阅读
+
+- [@testing-library/react](https://github.com/testing-library/react-testing-library) · [文档](https://testing-library.com/docs/react-testing-library/intro)
+- [@testing-library/user-event](https://github.com/testing-library/user-event) — 模拟真实用户交互
+- [@testing-library/jest-dom](https://github.com/testing-library/jest-dom) — DOM 专用 matcher(toBeVisible、toHaveTextContent 等)
+- [React 官方 — Testing](https://react.dev/learn/testing)

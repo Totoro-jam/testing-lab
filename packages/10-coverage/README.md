@@ -99,3 +99,12 @@ coverage: {
 1. **第一次接手项目时,先跑一次 coverage** —— 看清楚业务死角在哪
 2. **PR diff coverage**(只看新代码的覆盖率)比全量更值得卡
 3. **覆盖率报告作为讨论起点,不作为 KPI** —— KPI 化必然滋生废测试
+
+---
+
+## 延伸阅读
+
+- [Vitest — Coverage](https://vitest.dev/guide/coverage.html)
+- [istanbul.js](https://github.com/istanbuljs/istanbuljs) — 插桩式覆盖率引擎
+- [c8](https://github.com/nicolo-ribaudo/c8) — 基于 V8 内置 Profiler 的覆盖率工具
+- [Codecov](https://github.com/codecov/codecov-action) — CI 覆盖率报告服务

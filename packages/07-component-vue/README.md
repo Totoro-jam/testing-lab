@@ -4,8 +4,8 @@
 
 | 库 | 风格 | 何时用 |
 |---|---|---|
-| `@vue/test-utils` | 框架原生,API 围绕组件实例(`wrapper.vm`, `setData`, `setProps`) | 测复杂交互、需要直接操作组件内部状态 |
-| `@testing-library/vue` | 用户视角,API 围绕 DOM(`getByText`, `fireEvent.click`) | 测"用户能不能用",更接近 e2e 的心智模型 |
+| [`@vue/test-utils`](https://github.com/vuejs/test-utils) | 框架原生,API 围绕组件实例(`wrapper.vm`, `setData`, `setProps`) | 测复杂交互、需要直接操作组件内部状态 |
+| [`@testing-library/vue`](https://github.com/testing-library/vue-testing-library) | 用户视角,API 围绕 DOM(`getByText`, `fireEvent.click`) | 测"用户能不能用",更接近 e2e 的心智模型 |
 
 **社区共识(也是本章基调):优先用 testing-library。** 只有它的 API 不够用时再降级到 test-utils。
 
@@ -127,3 +127,11 @@ expect(screen.getByRole('alert')).toMatchSnapshot()
 ```
 
 **真实建议:小型 presentational 组件可以,业务组件不要。组件 DOM 容易改,snapshot 噪音大。**
+
+---
+
+## 延伸阅读
+
+- [@vue/test-utils 文档](https://test-utils.vuejs.org/) · [GitHub](https://github.com/vuejs/test-utils)
+- [@testing-library/vue 文档](https://testing-library.com/docs/vue-testing-library/intro) · [GitHub](https://github.com/testing-library/vue-testing-library)
+- [Testing Library 全家族](https://testing-library.com/) — React/Vue/Svelte/Angular 统一 API

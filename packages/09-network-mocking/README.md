@@ -8,7 +8,7 @@
 | Mock 底层 fetch / axios | `vi.stubGlobal('fetch', ...)` | 能验证请求 URL/body,但绕过了真实序列化逻辑 |
 | **拦截网络层** | **MSW** | **真实 fetch → 假响应,最接近真实** |
 
-MSW (Mock Service Worker) 是社区共识。**前后端用同一套 handler,浏览器、Node、e2e 都能跑。**
+[MSW (Mock Service Worker)](https://github.com/mswjs/msw) 是社区共识。**前后端用同一套 handler,浏览器、Node、e2e 都能跑。**
 
 ---
 
@@ -103,3 +103,11 @@ it('500 时显示错误', async () => {
 2. **vitest 用 happy-dom 时**:happy-dom 的 fetch 不被 MSW 拦,要切到 `jsdom` 或在 Node 环境跑。
 3. **handler 不匹配静默失败**:务必加 `onUnhandledRequest: 'error'`。
 4. **handler 文件别和业务代码耦合**:MSW handler 是 fixtures,应该放在 `tests/mocks/` 下,不应被生产代码 import。
+
+---
+
+## 延伸阅读
+
+- [MSW 官方文档](https://mswjs.io/) · [GitHub](https://github.com/mswjs/msw)
+- [MSW — Node.js 集成](https://mswjs.io/docs/integrations/node)
+- [nock](https://github.com/nock/nock) — Node.js 专用 HTTP mock(不支持浏览器)
