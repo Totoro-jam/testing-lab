@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - run: pnpm format:check
 
   test:
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - name: Run tests (packages 01-10, 12)
         run: pnpm -r --filter="./packages/*" --filter="!@testing-lab/11-e2e-playwright" run test
       - name: Run coverage
@@ -51,7 +51,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - name: Install Playwright browsers
         run: pnpm --filter @testing-lab/11-e2e-playwright exec playwright install --with-deps
       - name: Run E2E tests
