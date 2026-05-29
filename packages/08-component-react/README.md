@@ -13,7 +13,25 @@ render(<Hello name="Alice" />)
 expect(screen.getByText('Hello, Alice')).toBeInTheDocument()
 ```
 
-`getByRole` / `queryByRole` / `findByRole` 的语义、`userEvent` 用法,跟 Vue 那章完全一样,这里不重复。
+`getByRole` / `queryByRole` / `findByRole` 的语义跟 Vue 那章完全一样,这里不重复。
+
+### `userEvent` 常用方法速查
+
+使用前先创建用户实例:`const user = userEvent.setup()`
+
+| 方法 | 模拟操作 | 例子 |
+|---|---|---|
+| `user.click(el)` | 鼠标点击 | `await user.click(button)` |
+| `user.dblClick(el)` | 双击 | `await user.dblClick(el)` |
+| `user.type(el, text)` | 逐字输入 | `await user.type(input, "hello")` |
+| `user.clear(el)` | 清空输入框 | `await user.clear(input)` |
+| `user.tab()` | 按 Tab 键 | `await user.tab()` |
+| `user.keyboard(keys)` | 按键序列 | `await user.keyboard("{Enter}")` |
+| `user.hover(el)` | 鼠标悬停 | `await user.hover(el)` |
+| `user.selectOptions(el, v)` | 选择下拉选项 | `await user.selectOptions(sel, ["a"])` |
+| `user.upload(el, file)` | 文件上传 | `await user.upload(input, file)` |
+
+`type` 是往输入框打字;`keyboard` 是纯键盘事件(如 `{Enter}`、`{Control>}c`),不关心输入框。
 
 ---
 
