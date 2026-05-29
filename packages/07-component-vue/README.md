@@ -58,9 +58,17 @@ it('点击按钮 count + 1', async () => {
 ```
 
 **`userEvent` vs `fireEvent`:**
-- `fireEvent.click(el)` —— 直接派发一个 click 事件,简单粗暴
 - `userEvent.click(el)` —— 模拟真实用户操作链(focus → mousedown → mouseup → click),会触发更多副作用
-- **能用 userEvent 就用 userEvent**
+- `fireEvent.click(el)` —— 直接派发一个 click 事件,简单粗暴
+
+| 场景 | 推荐 | 原因 |
+|---|---|---|
+| 按钮点击、表单输入、键盘操作 | `userEvent` | 真实用户行为会先 focus 再 click,`fireEvent` 跳过了 focus,可能漏掉依赖 focus 的逻辑 |
+| `userEvent` 不支持的事件(scroll、resize、transitionend) | `fireEvent` | `userEvent` 只模拟用户能做的操作,这些是浏览器/CSS 自动触发的 |
+| 需要触发原生 DOM 事件但不关心事件链 | `fireEvent` | 比如测一个 `@mouseenter` 处理函数 |
+| 性能敏感(大量重复操作) | `fireEvent` | `userEvent` 模拟完整事件链更慢,批量操作时差异明显 |
+
+**默认用 `userEvent`,只在它做不到或不需要完整事件链时才降级到 `fireEvent`。**
 
 ---
 

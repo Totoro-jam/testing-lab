@@ -1,3 +1,3 @@
-export function Hello({ name }: { name: string }) {
+export function Hello({ name = "World" }: { name?: string }) {
   return <p>Hello, {name}</p>;
 }
